@@ -30,7 +30,7 @@ public class SingleTaskController {
         } else {
             model.addAttribute("task", taskRepository.findById(taskId).get());
         }
-            return "taskDetails/taskDetails";
+            return "/taskDetails";
         }
 
     }
