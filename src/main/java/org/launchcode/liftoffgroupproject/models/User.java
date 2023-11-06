@@ -2,13 +2,12 @@ package org.launchcode.liftoffgroupproject.models;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 public class User extends AbstractEntity {
@@ -24,6 +23,17 @@ public class User extends AbstractEntity {
 
     @NotBlank
     private String email;
+
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(name = "user_images",
+            joinColumns = {
+                @JoinColumn(name = "user_id")
+            },
+            inverseJoinColumns = {
+                @JoinColumn(name = "image_id")
+            }
+    )
+    private Set<Image> userImages;
 
     @JoinColumn(name="user_id")
     @OneToMany
@@ -62,5 +72,13 @@ public class User extends AbstractEntity {
     }
 
     public void setProfilePicture(String profilePicture) { this.profilePicture = profilePicture;
+    }
+
+    public Set<Image> getUserImages() {
+        return userImages;
+    }
+
+    public void setUserImages(Set<Image> userImages) {
+        this.userImages = userImages;
     }
 }
