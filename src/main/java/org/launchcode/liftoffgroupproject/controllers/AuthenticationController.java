@@ -1,21 +1,28 @@
 package org.launchcode.liftoffgroupproject.controllers;
 
 import org.launchcode.liftoffgroupproject.data.UserRepository;
+import org.launchcode.liftoffgroupproject.models.Image;
 import org.launchcode.liftoffgroupproject.models.User;
 import org.launchcode.liftoffgroupproject.models.dto.LoginFormDTO;
 import org.launchcode.liftoffgroupproject.models.dto.RegisterFormDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.io.IOException;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 @Controller
 public class AuthenticationController {
@@ -32,8 +39,9 @@ public class AuthenticationController {
         return "register";
     }
 
-    @PostMapping("/register")
+    @PostMapping(value = "/register", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public String processRegistrationForm(@ModelAttribute @Valid RegisterFormDTO registerFormDTO,
+                                          @RequestPart("imageFile") MultipartFile[] file,
                                           Errors errors, HttpServletRequest request,
                                           Model model) {
 
@@ -63,7 +71,29 @@ public class AuthenticationController {
         userRepository.save(newUser);
         setUserInSession(request.getSession(), newUser);
 
+        try {
+            Set<Image> images = uploadImage(file);
+            newUser.setUserImages(images);
+//            return newUser;
+        } catch (Exception e) {
+
+        }
+
         return "redirect:";
+    }
+
+    public Set<Image> uploadImage (MultipartFile[] multipartFiles) throws IOException {
+        Set<Image> images = new HashSet<>();
+
+        for (MultipartFile file : multipartFiles) {
+            Image image = new Image(
+                    file.getOriginalFilename(),
+                    file.getContentType(),
+                    file.getBytes()
+            );
+            images.add(image);
+        }
+        return images;
     }
 
     @GetMapping("/login")
