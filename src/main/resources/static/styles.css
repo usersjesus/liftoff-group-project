@@ -67,6 +67,20 @@
   border: 3px solid #83A0A8; /* Adjust the border color and thickness as desired */
   border-radius: 5px; /* Optional: Add rounded corners to the border */
 }
+
+footer {
+  flex-shrink: 0;
+  width: 100%;
+  text-align: center;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+
 /*@media only screen and (min-width: 970px) {
   html {
     width: 50%;

@@ -55,4 +55,6 @@ public class ProfileController {
        userRepository.save(user);
        return "redirect:/profile";
    }
+
+
 }
